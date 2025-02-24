@@ -4,11 +4,11 @@
 
 
 void setUp(void) {
-  // set stuff up here
+     init_history();
 }
 
 void tearDown(void) {
-  // clean stuff up here
+     clear_history();
 }
 
 
