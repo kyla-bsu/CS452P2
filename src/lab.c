@@ -86,7 +86,7 @@ char *get_prompt(const char *env) {
    *
    * @return The line read in a format suitable for exec
    */
-char **cmd_parse(char const *line) {
+  char **cmd_parse(char const *line) {
     long arg_max = sysconf(_SC_ARG_MAX);
     if (arg_max == -1) {
         arg_max = 4096; // Fallback value
@@ -96,12 +96,18 @@ char **cmd_parse(char const *line) {
         return NULL;
     }
     int argc = 0;
-    char *token = strtok(strdup(line), " \t\n");
+    char *line_copy = strdup(line);
+    if (!line_copy) {
+        free(argv);
+        return NULL;
+    }
+    char *token = strtok(line_copy, " \t\n");
     while (token && argc < (arg_max / 2 - 1)) {
-        argv[argc++] = token;
+        argv[argc++] = strdup(token);
         token = strtok(NULL, " \t\n");
     }
     argv[argc] = NULL;
+    free(line_copy);
     return argv;
 }
 
@@ -151,6 +157,7 @@ void sh_init(struct shell *sh) {
    * @param sh
    */
 void sh_init(struct shell *sh) {
+    UNUSED(*sh); //to eliminate warning
     // Initialize shell data structures
     // Put the shell in its own process group
     pid_t pid = getpid();
