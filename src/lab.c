@@ -35,6 +35,7 @@ char *get_prompt(const char *env) {
           strcpy(result, prompt);
      }
      return result;
+     free(result);
 }
 
 /**
@@ -72,7 +73,6 @@ char *get_prompt(const char *env) {
         perror("cd");
         return -1;
     }
-
     return 0;
 }
 
@@ -86,7 +86,12 @@ char *get_prompt(const char *env) {
    *
    * @return The line read in a format suitable for exec
    */
-  char **cmd_parse(char const *line) {
+  #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+char **cmd_parse(char const *line) {
     long arg_max = sysconf(_SC_ARG_MAX);
     if (arg_max == -1) {
         arg_max = 4096; // Fallback value
@@ -116,9 +121,11 @@ char *get_prompt(const char *env) {
    *
    * @param line the line to free
    */
-void cmd_free(char **line) {
+  void cmd_free(char **line) {
     if (line) {
-        free(line[0]); // Free the duplicated line
+        for (int i = 0; line[i] != NULL; i++) {
+            free(line[i]);
+        }
         free(line);
     }
 }
@@ -166,6 +173,9 @@ void sh_init(struct shell *sh) {
         exit(EXIT_FAILURE);
     }
     tcsetpgrp(STDIN_FILENO, pid);
+
+    // Set the shell prompt
+    sh->prompt = get_prompt("SHELL_PROMPT");
 }
 
 /**

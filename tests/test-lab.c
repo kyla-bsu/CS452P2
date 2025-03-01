@@ -9,6 +9,7 @@ void setUp(void) {
 
 void tearDown(void) {
      clear_history();
+     rl_clear_history();
 }
 
 
@@ -35,6 +36,8 @@ void test_cmd_parse2(void)
      free(expected[0]);
      free(expected[1]);
      free(expected);
+     free(stng);
+    cmd_free(actual);
 }
 
 void test_cmd_parse(void)

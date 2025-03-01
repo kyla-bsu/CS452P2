@@ -127,6 +127,11 @@ extern "C"
    */
   void exit(int status);
 
+  void init_history(void);
+void add_history_entry(const char *entry);
+void print_history(void);
+void clear_history(void);
+void rl_clear_history(void);
 
 #ifdef __cplusplus
 } // extern "C"
